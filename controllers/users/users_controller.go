@@ -1,13 +1,12 @@
 package users
 
 import (
-	"os"
-
 	"github.com/gin-gonic/gin"
 )
 
 var (
-	SecretKey = os.Getenv("SECRET_KEY")
+	// SecretKey = os.Getenv("SECRET_KEY")
+	SecretKey = "thisisasecret"
 )
 
 func Register(c *gin.Context) {
