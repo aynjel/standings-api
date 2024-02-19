@@ -1,15 +1,9 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"anggi.tabulation/app"
 )
-var Router * gin.Engine
+
 func main() {
-	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Hello world!",
-		})
-	})
-	r.Run()
+	app.StartApplication()
 }
