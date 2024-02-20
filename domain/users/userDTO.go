@@ -10,7 +10,7 @@ type User struct {
 	ID        int64  `json:"ID"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
-	Username  string `json:"username"`
+	UserName  string `json:"username"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 }
@@ -18,7 +18,7 @@ type User struct {
 func (user *User) Validate() *errors.RestErr {
 	user.FirstName = strings.TrimSpace(user.FirstName)
 	user.LastName = strings.TrimSpace(user.LastName)
-	user.Username = strings.TrimSpace(user.Username)
+	user.UserName = strings.TrimSpace(user.UserName)
 	user.Email = strings.TrimSpace(user.Email)
 	user.Password = strings.TrimSpace(user.Password)
 

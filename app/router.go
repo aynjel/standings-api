@@ -18,6 +18,7 @@ func MapUrls() {
 		apiRouter.POST("/register", users.Register)
 		apiRouter.POST("/login", users.Login)
 		apiRouter.GET("/user", users.GetUser)
+		apiRouter.GET("/users", users.GetUsers)
 		apiRouter.GET("/logout", users.Logout)
 
 		blogRouter := apiRouter.Group("/blog")

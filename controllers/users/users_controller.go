@@ -20,7 +20,7 @@ func Register(c *gin.Context) {
 	var user users.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		err := errors.NewBadRequestError("invalid json")
+		err := errors.NewBadRequestError(err.Error())
 		c.IndentedJSON(err.Status, err)
 		return
 	}
@@ -91,9 +91,13 @@ func DeleteUser(c *gin.Context) {
 }
 
 func GetUsers(c *gin.Context) {
-	c.IndentedJSON(200, gin.H{
-		"message": "GetUsers",
-	})
+	result, err := services.GetUsers()
+	if err != nil {
+		c.JSON(err.Status, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 func GetUserById(c *gin.Context) {

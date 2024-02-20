@@ -11,12 +11,12 @@ func CreateUser(user users.User) (*users.User, *errors.RestErr) {
 		return nil, err
 	}
 
-	pwSlice, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, errors.NewInternalServerError("error when trying to hash password")
+		return nil, errors.NewInternalServerError(err.Error())
 	}
+	user.Password = string(hashedPassword)
 
-	user.Password = string(pwSlice[:])
 	if err := user.Save(); err != nil {
 		return nil, err
 	}
@@ -39,4 +39,14 @@ func GetUserByEmailOrUsername(user users.User) (*users.User, *errors.RestErr) {
 	}
 
 	return &user, nil
+}
+
+func GetUsers() ([]users.User, *errors.RestErr) {
+	user := &users.User{}
+	users, err := user.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
