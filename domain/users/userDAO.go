@@ -11,8 +11,8 @@ var (
 			id SERIAL PRIMARY KEY,
 			firstname VARCHAR(50) NOT NULL,
 			lastname VARCHAR(50) NOT NULL,
-			username VARCHAR(50) NOT NULL,
-			email VARCHAR(100) NOT NULL,
+			username VARCHAR(50) UNIQUE NOT NULL,
+			email VARCHAR(100) UNIQUE NOT NULL,
 			password TEXT NOT NULL
 		);
 	`
@@ -26,6 +26,7 @@ var (
 )
 
 func init() {
+	// tabulationDB.Client.Exec(dropTableUser)
 	if _, err := tabulationDB.Client.Exec(createTableUser); err != nil {
 		panic(err)
 	}
