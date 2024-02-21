@@ -38,12 +38,12 @@ func Login(c *gin.Context) {
 	var user users.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		err := errors.NewBadRequestError("Invalid JSON body")
+		err := errors.NewBadRequestError(err.Error())
 		c.JSON(err.Status, err)
 		return
 	}
 
-	result, getErr := services.GetUserByEmailOrUsername(user)
+	result, getErr := services.GetUserByUsernameAndEmail(user)
 	if getErr != nil {
 		c.JSON(getErr.Status, getErr)
 		return
@@ -56,64 +56,124 @@ func Login(c *gin.Context) {
 
 	token, err := claims.SignedString([]byte(SecretKey))
 	if err != nil {
-		err := errors.NewInternalServerError("Error when trying to generate token")
+		err := errors.NewInternalServerError(err.Error())
 		c.JSON(err.Status, err)
 		return
 	}
 
 	c.SetCookie("jwt", token, 3600, "/", "localhost", false, true)
-
 	c.JSON(http.StatusOK, result)
 }
 
 func GetUser(c *gin.Context) {
-	c.IndentedJSON(200, gin.H{
-		"message": "GetUser",
-	})
-}
-
-func Logout(c *gin.Context) {
-	c.IndentedJSON(200, gin.H{
-		"message": "Logout",
-	})
-}
-
-func UpdateUser(c *gin.Context) {
-	c.IndentedJSON(200, gin.H{
-		"message": "UpdateUser",
-	})
-}
-
-func DeleteUser(c *gin.Context) {
-	c.IndentedJSON(200, gin.H{
-		"message": "DeleteUser",
-	})
-}
-
-func GetUsers(c *gin.Context) {
-	result, err := services.GetUsers()
+	userID, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
+		err := errors.NewBadRequestError(err.Error())
 		c.JSON(err.Status, err)
+		return
+	}
+
+	result, getErr := services.GetUser(userID)
+	if getErr != nil {
+		c.JSON(getErr.Status, getErr)
 		return
 	}
 
 	c.JSON(http.StatusOK, result)
 }
 
-func GetUserById(c *gin.Context) {
-	c.IndentedJSON(200, gin.H{
-		"message": "GetUserById",
-	})
+func GetAllUsers(c *gin.Context) {
+	result, getErr := services.GetAllUsers()
+	if getErr != nil {
+		c.JSON(getErr.Status, getErr)
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
-func GetUserByUsername(c *gin.Context) {
-	c.IndentedJSON(200, gin.H{
-		"message": "GetUserByUsername",
-	})
+func UpdateUser(c *gin.Context) {
+	var user users.User
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		err := errors.NewBadRequestError(err.Error())
+		c.JSON(err.Status, err)
+		return
+	}
+
+	result, getErr := services.UpdateUser(user)
+	if getErr != nil {
+		c.JSON(getErr.Status, getErr)
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
-func GetUserByEmail(c *gin.Context) {
-	c.IndentedJSON(200, gin.H{
-		"message": "GetUserByEmail",
+func DeleteUser(c *gin.Context) {
+	userID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		err := errors.NewBadRequestError(err.Error())
+		c.JSON(err.Status, err)
+		return
+	}
+
+	getErr := services.DeleteUser(userID)
+	if getErr != nil {
+		c.JSON(getErr.Status, getErr)
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
+func Logout(c *gin.Context) {
+	cookie, err := c.Cookie("jwt")
+	if err != nil {
+		err := errors.NewBadRequestError(err.Error())
+		c.JSON(err.Status, err)
+		return
+	}
+	c.SetCookie("jwt", cookie, -1, "/", "localhost", false, true)
+	c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
+}
+
+func Me(c *gin.Context) {
+	cookie, err := c.Cookie("jwt")
+	if err != nil {
+		err := errors.NewBadRequestError(err.Error())
+		c.JSON(err.Status, err)
+		return
+	}
+
+	token, err := jwt.Parse(cookie, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SecretKey), nil
 	})
+	if err != nil {
+		err := errors.NewBadRequestError(err.Error())
+		c.JSON(err.Status, err)
+		return
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		err := errors.NewBadRequestError(err.Error())
+		c.JSON(err.Status, err)
+		return
+	}
+
+	userID, err := strconv.ParseInt(claims["iss"].(string), 10, 64)
+	if err != nil {
+		err := errors.NewBadRequestError(err.Error())
+		c.JSON(err.Status, err)
+		return
+	}
+
+	result, getErr := services.GetUser(userID)
+	if getErr != nil {
+		c.JSON(getErr.Status, getErr)
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
