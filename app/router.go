@@ -13,12 +13,6 @@ func MapUrls() {
 		})
 	})
 
-	router.PUT("/v2/bot/channel/webhook/endpoint", func(c *gin.Context) {
-		c.IndentedJSON(200, gin.H{
-			"message": "Hello, playground",
-		})
-	})
-
 	apiRouter := router.Group("/api")
 	{
 		apiRouter.POST("/register", users.Register)
