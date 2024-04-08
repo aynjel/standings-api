@@ -10,6 +10,7 @@ require (
 )
 
 require (
+	github.com/githubnemo/CompileDaemon v1.4.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
