@@ -4,9 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"net/http"
-	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -46,34 +43,13 @@ func MapUrls() {
 
 	// Line login callback url
 	router.GET("/callback", func(c *gin.Context) {
-		const LINE_API = "https://api.line.me/oauth2/v2.1/"
-		const redirect_uri = "https://chat.line.biz/"
+		// const LINE_API = "https://api.line.me/oauth2/v2.1/"
+		// const redirect_uri = "https://chat.line.biz/"
 
 		code, _ := c.GetQuery("code")
 		state, _ := c.GetQuery("state")
 		println("code: ", code)
 		println("state: ", state)
-
-		// Get access token
-		url := LINE_API + "token"
-		payload := strings.NewReader("grant_type=authorization_code&code=" + code + "&redirect_uri=" + redirect_uri + "&client_id=" + "1656327446" + "&client_secret=" + "d782240c1a7ecb6ab9950be288e5068a")
-		req, _ := http.NewRequest("POST", url, payload)
-		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-		res, err := http.DefaultClient.Do(req)
-		if err != nil {
-			println(err.Error())
-		}
-		defer res.Body.Close()
-		body, _ := io.ReadAll(res.Body)
-		println(string(body))
-
-		c.IndentedJSON(200, gin.H{
-			"status":   "ok",
-			"response": json.RawMessage(body),
-		})
-
-		//settimeout and redirect to chat.line.biz
-		time.Sleep(5 * time.Second)
 		c.Redirect(302, "https://chat.line.biz/")
 
 		// Issue access token
