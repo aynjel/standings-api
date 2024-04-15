@@ -53,7 +53,7 @@ func MapUrls() {
 
 		// Issue access token
 		data := map[string]string{
-			"grant_type":    "authorization_code",
+			"grant_type":    "client_credentials",
 			"code":          code,
 			"redirect_uri":  "https://chat.line.biz/",
 			"client_id":     "1656327446",
