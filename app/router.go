@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -66,23 +67,14 @@ func MapUrls() {
 		body, _ := io.ReadAll(res.Body)
 		println(string(body))
 
-		// Get user profile
-		url = LINE_API + "profile"
-		req, _ = http.NewRequest("GET", url, nil)
-		req.Header.Add("Authorization", "Bearer "+string(body))
-
-		res, err2 := http.DefaultClient.Do(req)
-		if err2 != nil {
-			println(err2.Error())
-		}
-		defer res.Body.Close()
-		body, _ = io.ReadAll(res.Body)
-		println(string(body))
-
 		c.IndentedJSON(200, gin.H{
 			"status":   "ok",
 			"response": json.RawMessage(body),
 		})
+
+		//settimeout and redirect to chat.line.biz
+		time.Sleep(5 * time.Second)
+		c.Redirect(302, "https://chat.line.biz/")
 
 		// Issue access token
 		// data := map[string]string{
