@@ -60,7 +60,7 @@ func MapUrls() {
 			"client_secret": "d782240c1a7ecb6ab9950be288e5068a",
 		}
 		payload, _ := json.Marshal(data)
-		resp, err := http.Post(LINE_API+"token", "application/json", bytes.NewBuffer(payload))
+		resp, err := http.Post(LINE_API+"token", "application/x-www-form-urlencoded", bytes.NewBuffer(payload))
 		if err != nil {
 			println(err.Error())
 		}
