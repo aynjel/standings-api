@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,10 +44,34 @@ func MapUrls() {
 
 	// Line login callback url
 	router.GET("/callback", func(c *gin.Context) {
-		println(c.Request.URL.Query().Encode())
+		const LINE_API = "https://api.line.me/oauth2/v2.1/"
+
+		code, _ := c.GetQuery("code")
+		state, _ := c.GetQuery("state")
+		println("code: ", code)
+		println("state: ", state)
+
+		// Issue access token
+		data := map[string]string{
+			"grant_type":    "authorization_code",
+			"code":          code,
+			"redirect_uri":  "https://chat.line.biz/",
+			"client_id":     "1656327446",
+			"client_secret": "d782240c1a7ecb6ab9950be288e5068a",
+		}
+		payload, _ := json.Marshal(data)
+		resp, err := http.Post(LINE_API+"token", "application/json", bytes.NewBuffer(payload))
+		if err != nil {
+			println(err.Error())
+		}
+		defer resp.Body.Close()
+
+		body, _ := io.ReadAll(resp.Body)
+		println(string(body))
+
 		c.IndentedJSON(200, gin.H{
-			"status": "ok",
-			"params": c.Request.URL.Query(),
+			"status":   "ok",
+			"response": json.RawMessage(body),
 		})
 	})
 
