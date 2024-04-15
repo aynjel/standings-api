@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"io"
 
-	"anggi.tabulation/controllers/posts"
-	"anggi.tabulation/controllers/users"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,6 +15,7 @@ func MapUrls() {
 		})
 	})
 
+	// Line event webhook
 	router.POST("/webhook", func(c *gin.Context) {
 		body, _ := io.ReadAll(c.Request.Body)
 		println(string(body))
@@ -28,22 +27,31 @@ func MapUrls() {
 		})
 	})
 
-	apiRouter := router.Group("/api")
-	{
-		apiRouter.POST("/register", users.Register)
-		apiRouter.POST("/login", users.Login)
-		apiRouter.GET("/me", users.Me)
-		apiRouter.GET("/user/:id", users.GetUser)
-		apiRouter.GET("/users", users.GetAllUsers)
-		apiRouter.GET("/logout", users.Logout)
+	// Line login callback url
+	router.GET("/callback", func(c *gin.Context) {
+		println(c.Request.URL.Query().Encode())
+		c.IndentedJSON(200, gin.H{
+			"status": "ok",
+			"params": c.Request.URL.Query(),
+		})
+	})
 
-		blogRouter := apiRouter.Group("/blog")
-		{
-			blogRouter.GET("/", posts.GetAll)
-			blogRouter.POST("/", posts.Create)
-			blogRouter.GET("/:id", posts.Get)
-			blogRouter.PUT("/:id", posts.Update)
-			blogRouter.DELETE("/:id", posts.Delete)
-		}
-	}
+	// apiRouter := router.Group("/api")
+	// {
+	// 	apiRouter.POST("/register", users.Register)
+	// 	apiRouter.POST("/login", users.Login)
+	// 	apiRouter.GET("/me", users.Me)
+	// 	apiRouter.GET("/user/:id", users.GetUser)
+	// 	apiRouter.GET("/users", users.GetAllUsers)
+	// 	apiRouter.GET("/logout", users.Logout)
+
+	// 	blogRouter := apiRouter.Group("/blog")
+	// 	{
+	// 		blogRouter.GET("/", posts.GetAll)
+	// 		blogRouter.POST("/", posts.Create)
+	// 		blogRouter.GET("/:id", posts.Get)
+	// 		blogRouter.PUT("/:id", posts.Update)
+	// 		blogRouter.DELETE("/:id", posts.Delete)
+	// 	}
+	// }
 }
