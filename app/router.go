@@ -3,6 +3,7 @@ package app
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -32,8 +33,10 @@ func MapUrls() {
 
 	// Line event webhook
 	router.POST("/webhook", func(c *gin.Context) {
+		fmt.Println("webhook called")
+
 		body, _ := c.GetRawData()
-		println(string(body))
+		fmt.Println(string(body))
 
 		c.IndentedJSON(200, gin.H{
 			"status": "ok",
