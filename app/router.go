@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,49 +32,48 @@ func MapUrls() {
 
 	// Line event webhook
 	router.POST("/webhook", func(c *gin.Context) {
-		body, _ := io.ReadAll(c.Request.Body)
+		body, _ := c.GetRawData()
 		println(string(body))
 
-		c.Request.Body = io.NopCloser(bytes.NewReader(body))
 		c.IndentedJSON(200, gin.H{
-			"status":   "ok",
-			"response": json.RawMessage(body),
+			"status": "ok",
+			"body":   string(body),
 		})
 	})
 
 	// Line login callback url
 	router.GET("/callback", func(c *gin.Context) {
-		// const LINE_API = "https://api.line.me/oauth2/v2.1/"
-		// const redirect_uri = "https://chat.line.biz/"
+		const LINE_API = "https://api.line.me/oauth2/v2.1/"
+		const CHAT_LINE_URL = "https://chat.line.biz/"
 
 		code, _ := c.GetQuery("code")
 		state, _ := c.GetQuery("state")
+
 		println("code: ", code)
 		println("state: ", state)
-		c.Redirect(302, "https://chat.line.biz/")
 
 		// Issue access token
-		// data := map[string]string{
-		// 	"client_id":     "1656327446",
-		// 	"client_secret": "d782240c1a7ecb6ab9950be288e5068a",
-		// 	"code":          code,
-		// 	"grant_type":    "client_credentials",
-		// 	"redirect_uri":  "https://chat.line.biz/",
-		// }
-		// payload, _ := json.Marshal(data)
-		// resp, err := http.Post(LINE_API+"token", "application/x-www-form-urlencoded", bytes.NewBuffer(payload))
-		// if err != nil {
-		// 	println(err.Error())
-		// }
-		// defer resp.Body.Close()
+		data := map[string]string{
+			"client_id":     "1656327446",
+			"client_secret": "d782240c1a7ecb6ab9950be288e5068a",
+			"code":          code,
+			"grant_type":    "client_credentials",
+			"redirect_uri":  CHAT_LINE_URL + "callback",
+		}
+		payload, _ := json.Marshal(data)
+		resp, err := http.Post(LINE_API+"token", "application/x-www-form-urlencoded", bytes.NewBuffer(payload))
+		if err != nil {
+			println(err.Error())
+		}
+		defer resp.Body.Close()
 
-		// body, _ := io.ReadAll(resp.Body)
-		// println(string(body))
+		body, _ := io.ReadAll(resp.Body)
+		println(string(body))
 
-		// c.IndentedJSON(200, gin.H{
-		// 	"status":   "ok",
-		// 	"response": json.RawMessage(body),
-		// })
+		c.IndentedJSON(200, gin.H{
+			"status":   "ok",
+			"response": json.RawMessage(body),
+		})
 	})
 
 	// apiRouter := router.Group("/api")
