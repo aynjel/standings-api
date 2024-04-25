@@ -31,50 +31,24 @@ func MapUrls() {
 		})
 	})
 
-	// Line event webhook
+	// Telegram webhook
 	router.POST("/webhook", func(c *gin.Context) {
-		fmt.Println("webhook called")
-		fmt.Println(c.Request.Body)
-
-		c.IndentedJSON(200, gin.H{
-			"status": "ok",
-			"body":   c.Request.Body,
-		})
-	})
-
-	// Line login callback url
-	router.GET("/callback", func(c *gin.Context) {
-		const LINE_API = "https://api.line.me/oauth2/v2.1/"
-		const CHAT_LINE_URL = "https://chat.line.biz/"
-
-		code, _ := c.GetQuery("code")
-		state, _ := c.GetQuery("state")
-
-		println("code: ", code)
-		println("state: ", state)
-
-		// Issue access token
-		data := map[string]string{
-			"client_id":     "1656327446",
-			"client_secret": "d782240c1a7ecb6ab9950be288e5068a",
-			"code":          code,
-			"grant_type":    "client_credentials",
-			"redirect_uri":  CHAT_LINE_URL + "callback",
-		}
-		payload, _ := json.Marshal(data)
-		resp, err := http.Post(LINE_API+"token", "application/x-www-form-urlencoded", bytes.NewBuffer(payload))
+		var buf bytes.Buffer
+		_, err := io.Copy(&buf, c.Request.Body)
 		if err != nil {
-			println(err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
-		defer resp.Body.Close()
 
-		body, _ := io.ReadAll(resp.Body)
-		println(string(body))
+		var update map[string]interface{}
+		if err := json.Unmarshal(buf.Bytes(), &update); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-		c.IndentedJSON(200, gin.H{
-			"status":   "ok",
-			"response": json.RawMessage(body),
-		})
+		fmt.Println(update)
+
+		c.JSON(http.StatusOK, gin.H{"status": "ok", "update": update})
 	})
 
 	// apiRouter := router.Group("/api")
