@@ -34,13 +34,11 @@ func MapUrls() {
 	// Line event webhook
 	router.POST("/webhook", func(c *gin.Context) {
 		fmt.Println("webhook called")
-
-		body, _ := c.GetRawData()
-		fmt.Println(string(body))
+		fmt.Println(c.Request.Body)
 
 		c.IndentedJSON(200, gin.H{
 			"status": "ok",
-			"body":   string(body),
+			"body":   c.Request.Body,
 		})
 	})
 
