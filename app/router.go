@@ -1,11 +1,7 @@
 package app
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,22 +29,13 @@ func MapUrls() {
 
 	// Telegram webhook
 	router.POST("/webhook", func(c *gin.Context) {
-		var buf bytes.Buffer
-		_, err := io.Copy(&buf, c.Request.Body)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		var update map[string]interface{}
-		if err := json.Unmarshal(buf.Bytes(), &update); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		fmt.Println(update)
-
-		c.JSON(http.StatusOK, gin.H{"status": "ok", "update": update})
+		// log the request from telegram
+		fmt.Println(c.Request.Body)
+		c.IndentedJSON(200, gin.H{
+			"status": "ok",
+			"msg":    "webhook received",
+			"body":   c.Request.Body,
+		})
 	})
 
 	// apiRouter := router.Group("/api")
