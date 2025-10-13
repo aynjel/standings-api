@@ -1,6 +1,6 @@
 package judges
 
-import "anggi.tabulation/database/postgreSQL/tabulationDB"
+import "anggi.tabulation/database/tabulationDB"
 
 var (
 	createTableJudge = `CREATE TABLE IF NOT EXISTS judges (

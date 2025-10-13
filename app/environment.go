@@ -9,6 +9,7 @@ import (
 func LoadEnv() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		// don't fatal here - allow running without a .env file (useful for simple dev runs)
+		log.Println("warning: .env file not found, continuing with environment variables")
 	}
 }

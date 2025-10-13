@@ -1,6 +1,6 @@
 package participants
 
-import "anggi.tabulation/database/postgreSQL/tabulationDB"
+import "anggi.tabulation/database/tabulationDB"
 
 var (
 	createTableParticipant = `

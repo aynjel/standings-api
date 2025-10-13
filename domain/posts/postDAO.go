@@ -1,7 +1,7 @@
 package posts
 
 import (
-	"anggi.tabulation/database/postgreSQL/tabulationDB"
+	"anggi.tabulation/database/tabulationDB"
 	"anggi.tabulation/utils/errors"
 )
 

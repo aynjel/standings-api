@@ -1,6 +1,6 @@
 package events
 
-import "anggi.tabulation/database/postgreSQL/tabulationDB"
+import "anggi.tabulation/database/tabulationDB"
 
 var (
 	createTableEvent = `
