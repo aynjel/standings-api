@@ -1,0 +1,53 @@
+services:
+  # Development service with Go tools included
+  # Use for development when you need to run `go get` inside the container
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: tabulation-api-dev
+    ports:
+      - "${PORT:-4300}:4300"
+    environment:
+      - PORT=${PORT:-4300}
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key}
+      - APP_ENV=${APP_ENV:-development}
+      - SQLITE_IN_MEMORY=${SQLITE_IN_MEMORY:-false}
+      - SQLITE_DB_PATH=${SQLITE_DB_PATH:-./database/standings_dev.db}
+      - DATABASE_URL=${DATABASE_URL:-}
+    volumes:
+      # Mount source code for live reload
+      - .:/app
+      # Persist SQLite database
+      - db_data:/root/database
+    networks:
+      - tabulation-network
+    restart: unless-stopped
+
+  # PostgreSQL database service (optional)
+  postgres:
+    image: postgres:15-alpine
+    container_name: tabulation-postgres-dev
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-tabulation_db}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tabulation-network
+    restart: unless-stopped
+    profiles:
+      - postgres
+
+volumes:
+  db_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  tabulation-network:
+    driver: bridge

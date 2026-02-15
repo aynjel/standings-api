@@ -1,0 +1,54 @@
+# Version control
+.git
+.gitignore
+.github
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*.swn
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Build and generated files
+*.o
+*.a
+*.so
+.exe
+tabulation-api
+
+# Dependencies
+vendor/
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# Environment files (don't include .env in Docker build)
+.env
+.env.local
+.env.*.local
+
+# Documentation
+*.md
+!README.md
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Development database (can be rebuilt)
+database/standings_dev.db
+
+# Test files
+*_test.go
+coverage/
+*.cover
+
+# Temporary files
+tmp/
+temp/

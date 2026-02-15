@@ -1,0 +1,25 @@
+# Development Dockerfile with Go tools included
+# Use this for development when you need to run `go get`, etc inside the container
+
+FROM golang:1.21.6-alpine
+
+# Install build dependencies
+RUN apk add --no-cache git make ca-certificates
+
+# Set working directory
+WORKDIR /app
+
+# Copy go mod files
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Expose port
+EXPOSE 4300
+
+# Run the application
+CMD ["go", "run", "main.go"]
