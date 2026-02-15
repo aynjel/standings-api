@@ -16,6 +16,16 @@ const (
 	SecretKey = "thisisasecret"
 )
 
+// Register godoc
+// @Summary      Register a new user
+// @Description  Create a new user account
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        user  body      users.User  true  "User registration data"
+// @Success      201   {object}  users.User
+// @Failure      400   {object}  errors.RestErr
+// @Router       /register [post]
 func Register(c *gin.Context) {
 	var user users.User
 
@@ -34,6 +44,17 @@ func Register(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, result)
 }
 
+// Login godoc
+// @Summary      User login
+// @Description  Authenticate user and receive JWT token
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        credentials  body      users.User  true  "Login credentials"
+// @Success      200          {object}  users.User
+// @Failure      400          {object}  errors.RestErr
+// @Failure      401          {object}  errors.RestErr
+// @Router       /login [post]
 func Login(c *gin.Context) {
 	var user users.User
 
@@ -65,6 +86,17 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// GetUser godoc
+// @Summary      Get user by ID
+// @Description  Retrieve a specific user by their ID
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "User ID"
+// @Success      200  {object}  users.User
+// @Failure      400  {object}  errors.RestErr
+// @Failure      404  {object}  errors.RestErr
+// @Router       /user/{id} [get]
 func GetUser(c *gin.Context) {
 	userID, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -82,6 +114,15 @@ func GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// GetAllUsers godoc
+// @Summary      Get all users
+// @Description  Retrieve a list of all users
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Success      200  {array}   users.User
+// @Failure      500  {object}  errors.RestErr
+// @Router       /users [get]
 func GetAllUsers(c *gin.Context) {
 	result, getErr := services.GetAllUsers()
 	if getErr != nil {

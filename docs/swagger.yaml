@@ -1,0 +1,254 @@
+basePath: /api
+definitions:
+  errors.RestErr:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+  posts.Post:
+    properties:
+      ID:
+        type: integer
+      author_id:
+        type: integer
+      content:
+        type: string
+      created_at:
+        type: string
+      title:
+        type: string
+    type: object
+  users.User:
+    properties:
+      ID:
+        type: integer
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:4300
+info:
+  contact:
+    email: support@tabulation.com
+    name: API Support
+  description: A comprehensive API for event tabulation and management
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Tabulation API
+  version: "1.0"
+paths:
+  /blog/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new blog post
+      parameters:
+      - description: Post data
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/posts.Post'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/posts.Post'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.RestErr'
+      summary: Create a new post
+      tags:
+      - blog
+  /blog/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific blog post by ID
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/posts.Post'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.RestErr'
+      summary: Get post by ID
+      tags:
+      - blog
+    put:
+      consumes:
+      - application/json
+      description: Update an existing blog post
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated post data
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/posts.Post'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/posts.Post'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.RestErr'
+      summary: Update a post
+      tags:
+      - blog
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and receive JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/users.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/users.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.RestErr'
+      summary: User login
+      tags:
+      - users
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: User registration data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/users.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/users.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.RestErr'
+      summary: Register a new user
+      tags:
+      - users
+  /user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/users.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.RestErr'
+      summary: Get user by ID
+      tags:
+      - users
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/users.User'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.RestErr'
+      summary: Get all users
+      tags:
+      - users
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

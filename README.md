@@ -15,6 +15,13 @@ A comprehensive RESTful API built with [Gin](https://gin-gonic.com/) framework i
 
 ## ✨ Features
 
+- **Interactive API Documentation**
+  - 🎨 Modern Scalar UI for API documentation
+  - 📖 Auto-generates OpenAPI/Swagger specification
+  - 🚀 Automatically opens in browser when app starts
+  - 🧪 Interactive endpoint testing
+  - Access at: `http://localhost:4300/docs`
+
 - **User Authentication & Management**
   - User registration with password hashing (bcrypt)
   - Login/Logout functionality

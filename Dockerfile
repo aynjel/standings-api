@@ -13,8 +13,14 @@ COPY go.mod go.sum ./
 # Download dependencies
 RUN go mod download
 
+# Install swag for API documentation
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+
 # Copy source code
 COPY . .
+
+# Generate Swagger documentation
+RUN /root/go/bin/swag init || swag init
 
 # Build the application
 # CGO_ENABLED=0 creates a static binary without cgo dependencies
@@ -31,6 +37,9 @@ WORKDIR /root/
 
 # Copy the binary from builder
 COPY --from=builder /app/tabulation-api .
+
+# Copy generated docs from builder
+COPY --from=builder /app/docs ./docs
 
 # Copy .env.example (optional, for reference)
 COPY .env.example .

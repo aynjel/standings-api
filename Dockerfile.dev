@@ -12,14 +12,22 @@ WORKDIR /app
 # Copy go mod files
 COPY go.mod go.sum ./
 
-# Download dependencies
-RUN go mod download
+# Download dependencies and ensure go.sum is up to date
+RUN go mod download && go mod tidy
+
+# Install swag for API documentation
+RUN go install github.com/swaggo/swag/cmd/swag@latest
 
 # Copy source code
 COPY . .
 
+# Copy and set up entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Expose port
 EXPOSE 4300
 
-# Run the application
+# Use entrypoint to generate docs on startup
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["go", "run", "main.go"]

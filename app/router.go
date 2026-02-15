@@ -5,6 +5,8 @@ import (
 	"anggi.tabulation/controllers/posts"
 	"anggi.tabulation/controllers/users"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func MapUrls() {
@@ -21,6 +23,10 @@ func MapUrls() {
 		}
 		c.Next()
 	})
+
+	// API Documentation routes
+	router.GET("/docs", ServeScalarUI())
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	router.GET("/", func(c *gin.Context) {
 		c.IndentedJSON(200, gin.H{
